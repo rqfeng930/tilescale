@@ -28,7 +28,17 @@ git clone --recursive https://github.com/tile-ai/tilescale
 cd tilescale
 ```
 
-2. **Install Project**:
+2. **Install Project**
+
+Either run the all-in-one install script (optionally with NVSHMEM from source):
+
+```bash
+./install.sh                    # TileScale only
+./install.sh --with-nvshmem     # TileScale + NVSHMEM from source (for device-side APIs)
+./install.sh --with-nvshmem --nvshmem-arch 90   # For H100 (sm_90)
+```
+
+Or install step by step:
 
 ```bash
 pip install cuda-python==12.9 # should align with your nvcc version
@@ -54,9 +64,18 @@ From the project root:
 TILELANG_USE_DISTRIBUTED=1 python examples/distributed/example_allgather_gemm_overlapped.py
 ```
 
+**Uninstall**
+
+From the project root:
+
+```bash
+./uninstall.sh                    # Remove TileScale and pynvshmem
+./uninstall.sh --clean-nvshmem-src   # Also delete 3rdparty/nvshmem_src
+```
+
 ## To use NVSHMEM APIs
 
-Device-side code generation (kernels calling `nvshmem_*` on the GPU) requires NVSHMEM built from source (the pip package does not provide `libnvshmem_device`). Build from source and install the Python bindings as follows.
+Device-side code generation (kernels calling `nvshmem_*` on the GPU) requires NVSHMEM built from source (the pip package does not provide `libnvshmem_device`). If you installed with `./install.sh --with-nvshmem`, NVSHMEM and pynvshmem are already installed; add the printed `LD_LIBRARY_PATH` to your environment. Otherwise, build from source and install the Python bindings as follows.
 
 **1. Build NVSHMEM from source**
 
