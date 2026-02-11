@@ -37,7 +37,11 @@ export NVSHMEM_IB_GID_INDEX=3
 memcheck=${MEMCHECK:=0}  # set env var. `MEMCHECK` to 1 to enable memory check via compute-sanitizer
 # This is especially useful for debugging memory issues, e.g. CUDA misalignment errors and TMA stuff.
 
-PYTHON_EXEC="$(which python)"
+PYTHON_EXEC="${PYTHON_EXEC:-$(command -v python3 || command -v python || true)}"
+if [ -z "${PYTHON_EXEC}" ]; then
+  echo "Error: python3/python not found on PATH; set PYTHON_EXEC to a valid interpreter." >&2
+  exit 1
+fi
 CMD="${PYTHON_EXEC} -m torch.distributed.run \
   --node_rank=${node_rank} \
   --nproc_per_node=${nproc_per_node} \
